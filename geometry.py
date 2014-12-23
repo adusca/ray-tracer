@@ -24,23 +24,27 @@ class Line():
         return 1
 
 class Sphere():
-    def __init__(self, center, radius):
+    def __init__(self, center, radius, color):
         """
-        Center is an 3-element tuple
+        Center is a 3-element tuple representing a spacial position
         Radius is a positive number
+        Color is 3-element tuple representing RGB values of the sphere's color
         """
         self.center = center
         self.radius = radius
-
+        self.color = color
     @staticmethod
-    def new_sphere(center, radius):
-        return Sphere(center, radius)
+    def new_sphere(center, radius, color):
+        return Sphere(center, radius, color)
 
 def intersect(line, sphere):
-    return line.distanceToPoint(sphere.center) <= sphere.radius
+    if line.distanceToPoint(sphere.center) <= sphere.radius:
+        return sphere.color
+    else:
+        return (0, 0, 0)
 
-S = Sphere.new_sphere((0, 0, 0), 1)
-S2 = Sphere.new_sphere((0, 0, 0), 0.5)
+S = Sphere.new_sphere((0, 0, 0), 1, (10, 200, 20))
+S2 = Sphere.new_sphere((0, 0, 0), 0.5, (10, 200, 20))
 l = Line.throughPoints((-10, 0, 0), (1, 1, 1))
 print intersect(l, S)
 print intersect(l, S2)
