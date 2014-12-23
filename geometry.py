@@ -33,18 +33,19 @@ class Sphere():
         self.center = center
         self.radius = radius
         self.color = color
-    @staticmethod
-    def new_sphere(center, radius, color):
-        return Sphere(center, radius, color)
 
-def intersect(line, sphere):
-    if line.distanceToPoint(sphere.center) <= sphere.radius:
-        return sphere.color
-    else:
-        return (0, 0, 0)
+    def intersect(self, line):
+        if line.distanceToPoint(self.center) <= self.radius:
+            return self.color
+        else:
+            return (255, 255, 255)
 
-S = Sphere.new_sphere((0, 0, 0), 1, (10, 200, 20))
-S2 = Sphere.new_sphere((0, 0, 0), 0.5, (10, 200, 20))
-l = Line.throughPoints((-10, 0, 0), (1, 1, 1))
-print intersect(l, S)
-print intersect(l, S2)
+class Vector():
+    def __init__(self, coords):
+        self.coords = coords
+
+    def product(self, v2):
+        """
+        Calculates the scalar product of two vectors
+        """
+        return sum(x*y for (x, y) in zip(self.coords, v2))
