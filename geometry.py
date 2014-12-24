@@ -22,11 +22,12 @@ class Line():
         """
         Returns the distance between a line and a point
         """
-        x0 = Vector(point)
-        x1 = Vector(self.slope)
-        x2 = Vector(self.start)
-        num = x0.subtract(x1).product(x0.subtract(x2))
-        return abs(float(num)/x2.subtract(x1).norm())
+        q = Vector(point)
+        v = Vector(self.slope)
+        p = Vector(self.start)
+        vec = q.subtract(p)
+        proj = vec.project(v)
+        return (proj.subtract(vec)).norm()
 
 class Sphere():
     def __init__(self, center, radius, color):
@@ -49,14 +50,30 @@ class Vector():
     def __init__(self, coords):
         self.coords = coords
 
-    def product(self, v2):
-        """
-        Calculates the scalar product of two vectors
-        """
+    def scalar_product(self, v2):
         return sum(x*y for (x, y) in zip(self.coords, v2.coords))
 
     def subtract(self, v2):
-        return Vector((self.coords[0] - v2.coords[0], self.coords[1] - v2.coords[1], self.coords[2] - v2.coords[2]))
+        return Vector([self.coords[0] - v2.coords[0], self.coords[1] - v2.coords[1], self.coords[2] - v2.coords[2]])
 
     def norm(self):
         return sqrt(sum(x**2 for x in self.coords))
+
+    def cross_product(self, v2):
+        a0, a1, a2 = self.coords
+        b0, b1, b2 = v2.coords
+        return Vector([a1*b2 - a2*b1, a2*b0 - a0*b2, a0*b1 - a1*b0])
+
+    def equals(self, v2):
+        eps = 0.0001
+        for i in range(len(self.coords)):
+            if abs(self.coords[i] - v2.coords[i]) > eps:
+                return False
+        return True
+
+    def mul_by_number(self, num):
+        return Vector([x*num for x in self.coords])
+
+    def project(self, v2):
+        n = float(self.scalar_product(v2))/v2.scalar_product(v2)
+        return v2.mul_by_number(n)
