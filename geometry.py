@@ -41,10 +41,17 @@ class Sphere():
         self.color = color
 
     def intersect(self, line):
-        if line.distanceToPoint(self.center) <= self.radius:
-            return self.color
-        else:
-            return (255, 255, 255)
+        return line.distanceToPoint(self.center) <= self.radius
+
+    def intersection_value(self, line):
+        v = Vector(line.slope)
+        s = Vector(line.start)
+        c = Vector(self.center)
+        q = s.subtract(c)
+        A = sum(x*x for x in v.coords)
+        B = sum(-2*x*y for (x, y) in zip(v.coords, q.coords))
+        C = sum(y*y for y in q.coords) - self.radius**2
+        return solve_quadradic((A, B, C))
 
 class Vector():
     def __init__(self, coords):
@@ -77,3 +84,15 @@ class Vector():
     def project(self, v2):
         n = float(self.scalar_product(v2))/v2.scalar_product(v2)
         return v2.mul_by_number(n)
+
+def solve_quadradic(coef):
+    a = coef[0]
+    b = coef[1]
+    c = coef[2]
+    delta = b**2 - 4*a*c
+    ans = []
+    ans.append(-b + sqrt(delta)/2.0*a)
+    x = -b - sqrt(delta)/2.0*a
+    if x >= 0:
+        ans.append(x)
+    return min(ans)

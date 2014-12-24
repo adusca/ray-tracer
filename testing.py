@@ -3,12 +3,12 @@ from geometry import *
 def test_intersect_True():
     S = Sphere((0, 0, 0), 1, (10, 200, 20))
     l = Line.throughPoints((0, 1, 0), (0, 1, 1))
-    assert S.intersect(l) == (10, 200, 20) 
+    assert S.intersect(l) 
 
 def test_intersect_False():
     S = Sphere((100, 100, 100), 0.1, (10, 200, 20))
     l = Line.throughPoints((0, 0, 1), (0, 0, 2))
-    assert S.intersect(l) == (255, 255, 255)
+    assert S.intersect(l) == False
 
 # Testing vector methods
 
