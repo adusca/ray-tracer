@@ -1,3 +1,5 @@
+from math import sqrt
+
 class Line():
     def __init__(self, slope, start):
         """
@@ -19,9 +21,12 @@ class Line():
     def distanceToPoint(self, point):
         """
         Returns the distance between a line and a point
-        currently broken
         """
-        return 1
+        x0 = Vector(point)
+        x1 = Vector(self.slope)
+        x2 = Vector(self.start)
+        num = x0.subtract(x1).product(x0.subtract(x2))
+        return abs(float(num)/x2.subtract(x1).norm())
 
 class Sphere():
     def __init__(self, center, radius, color):
@@ -48,7 +53,10 @@ class Vector():
         """
         Calculates the scalar product of two vectors
         """
-        return sum(x*y for (x, y) in zip(self.coords, v2))
+        return sum(x*y for (x, y) in zip(self.coords, v2.coords))
 
     def subtract(self, v2):
-        return Vector((self.coords[0] - v2.coords[0] self.coords[1] - v2.coords[1], self.coords[2] - v2.coords[2])
+        return Vector((self.coords[0] - v2.coords[0], self.coords[1] - v2.coords[1], self.coords[2] - v2.coords[2]))
+
+    def norm(self):
+        return sqrt(sum(x**2 for x in self.coords))
