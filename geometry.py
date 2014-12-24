@@ -49,3 +49,6 @@ class Vector():
         Calculates the scalar product of two vectors
         """
         return sum(x*y for (x, y) in zip(self.coords, v2))
+
+    def subtract(self, v2):
+        return Vector((self.coords[0] - v2.coords[0] self.coords[1] - v2.coords[1], self.coords[2] - v2.coords[2])
