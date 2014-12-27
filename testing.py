@@ -1,14 +1,16 @@
 from geometry import *
 
+# Testing sphere methods
+
 def test_intersect_True():
     S = Sphere((0, 0, 0), 1, (10, 200, 20))
-    l = Line.throughPoints((0, 1, 0), (0, 1, 1))
-    assert S.intersect(l) 
+    l = Line.through_points((0, 1, 0), (0, 1, 1))
+    assert S.intersection_value(l) != []
 
 def test_intersect_False():
     S = Sphere((100, 100, 100), 0.1, (10, 200, 20))
-    l = Line.throughPoints((0, 0, 1), (0, 0, 2))
-    assert S.intersect(l) == False
+    l = Line.through_points((0, 0, 1), (0, 0, 2))
+    assert S.intersection_value(l) == []
 
 # Testing vector methods
 

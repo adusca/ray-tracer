@@ -45,7 +45,7 @@ class HorizontalPlane():
         if a == 0:
             return []
 	t =  float(self.cte -  line.start[2])/line.slope[2]
-        if t >= 0:
+        if t > 0.01:
             return [t]
         else:
             return []
@@ -75,7 +75,7 @@ class Sphere():
         A = v.squared_norm()
         B = 2*v.scalar_product(q)
         C = q.squared_norm() - self.radius**2
-        return solve_quadradic((A, B, C))
+        return solve_quadradic(A, B, C)
         
     def color_at_point(self, p):
         return self.color
@@ -118,14 +118,11 @@ class Vector():
         n = float(self.scalar_product(v2))/v2.scalar_product(v2)
         return v2.mul_by_number(n)
 
-def solve_quadradic(coef):
-    a = coef[0]
-    b = coef[1]
-    c = coef[2]
+def solve_quadradic(a, b, c):
     delta = b**2 - 4*a*c
     if delta < 0:
         return []
     ans = []
     ans.append((-b - sqrt(delta))/(2.0*a))
     ans.append((-b + sqrt(delta))/(2.0*a))
-    return filter(lambda x: x >= 0, ans)
+    return filter(lambda x: x > 0.01, ans)
