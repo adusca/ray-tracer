@@ -35,18 +35,26 @@ class Line():
         return p.add(q.mul_by_number(num))
 
 class HorizontalPlane():
-    def __init__(self, cte, color):
+    def __init__(self, cte, color1, color2):
         self.cte = cte
-        self.color = color
-
-    def intersect(self, line):
-        return line.slope[2] != 0
+        self.color1 = color1
+        self.color2 = color2
 
     def intersection_value(self, line):
-return float(self.cte -  line.start[2])/line.slope[2]
+        a = line.slope[2]
+        if a == 0:
+            return []
+	t =  float(self.cte -  line.start[2])/line.slope[2]
+        if t >= 0:
+            return [t]
+        else:
+            return []
 
     def color_at_point(self, p):
-        return (0, 200, 0) if int(p[0]) % 2 == int(p[1]) % 2 else (0, 0, 200)
+        if int(p[0]) % 2 == int(p[1]) % 2:
+            return self.color1 
+        else:
+            return self.color2
 
 class Sphere():
     def __init__(self, center, radius, color):
@@ -59,17 +67,14 @@ class Sphere():
         self.radius = radius
         self.color = color
 
-    def intersect(self, line):
-        return line.distance_to_point(self.center) <= self.radius
-
     def intersection_value(self, line):
         v = Vector(line.slope)
         s = Vector(line.start)
         c = Vector(self.center)
         q = s.subtract(c)
-        A = sum(x*x for x in v.coords)
-        B = sum(-2*x*y for (x, y) in zip(v.coords, q.coords))
-        C = sum(y*y for y in q.coords) - self.radius**2
+        A = v.squared_norm()
+        B = 2*v.scalar_product(q)
+        C = q.squared_norm() - self.radius**2
         return solve_quadradic((A, B, C))
         
     def color_at_point(self, p):
@@ -88,8 +93,11 @@ class Vector():
     def add(self, v2):
         return Vector([self.coords[0] + v2.coords[0], self.coords[1] + v2.coords[1], self.coords[2] + v2.coords[2]])
 
+    def squared_norm(self):
+        return sum(x**2 for x in self.coords)
+
     def norm(self):
-        return sqrt(sum(x**2 for x in self.coords))
+        return sqrt(self.squared_norm())
 
     def cross_product(self, v2):
         a0, a1, a2 = self.coords
@@ -115,9 +123,9 @@ def solve_quadradic(coef):
     b = coef[1]
     c = coef[2]
     delta = b**2 - 4*a*c
+    if delta < 0:
+        return []
     ans = []
-    ans.append(-b + sqrt(delta)/2.0*a)
-    x = -b - sqrt(delta)/2.0*a
-    if x >= 0:
-        ans.append(x)
-    return min(ans)
+    ans.append((-b - sqrt(delta))/(2.0*a))
+    ans.append((-b + sqrt(delta))/(2.0*a))
+    return filter(lambda x: x >= 0, ans)
