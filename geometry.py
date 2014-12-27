@@ -10,7 +10,7 @@ class Line():
         self.start = start
 
     @staticmethod
-    def throughPoints(point0, point1):
+    def through_points(point0, point1):
         """
         Creates a line that passes in two given points 
         """
@@ -18,7 +18,7 @@ class Line():
         x0, y0, z0 = point0
         return Line((x1 - x0, y1 - y0, z1 - z0), (x0, y0, z0))
 
-    def distanceToPoint(self, point):
+    def distance_to_point(self, point):
         """
         Returns the distance between a line and a point
         """
@@ -28,6 +28,25 @@ class Line():
         vec = q.subtract(p)
         proj = vec.project(v)
         return (proj.subtract(vec)).norm()
+
+    def point_after_t(self, num):
+        p = Vector(self.start)
+        q = Vector(self.slope)
+        return p.add(q.mul_by_number(num))
+
+class HorizontalPlane():
+    def __init__(self, cte, color):
+        self.cte = cte
+        self.color = color
+
+    def intersect(self, line):
+        return line.slope[2] != 0
+
+    def intersection_value(self, line):
+return float(self.cte -  line.start[2])/line.slope[2]
+
+    def color_at_point(self, p):
+        return (0, 200, 0) if int(p[0]) % 2 == int(p[1]) % 2 else (0, 0, 200)
 
 class Sphere():
     def __init__(self, center, radius, color):
@@ -41,7 +60,7 @@ class Sphere():
         self.color = color
 
     def intersect(self, line):
-        return line.distanceToPoint(self.center) <= self.radius
+        return line.distance_to_point(self.center) <= self.radius
 
     def intersection_value(self, line):
         v = Vector(line.slope)
@@ -52,6 +71,9 @@ class Sphere():
         B = sum(-2*x*y for (x, y) in zip(v.coords, q.coords))
         C = sum(y*y for y in q.coords) - self.radius**2
         return solve_quadradic((A, B, C))
+        
+    def color_at_point(self, p):
+        return self.color
 
 class Vector():
     def __init__(self, coords):
@@ -62,6 +84,9 @@ class Vector():
 
     def subtract(self, v2):
         return Vector([self.coords[0] - v2.coords[0], self.coords[1] - v2.coords[1], self.coords[2] - v2.coords[2]])
+
+    def add(self, v2):
+        return Vector([self.coords[0] + v2.coords[0], self.coords[1] + v2.coords[1], self.coords[2] + v2.coords[2]])
 
     def norm(self):
         return sqrt(sum(x**2 for x in self.coords))
