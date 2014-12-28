@@ -8,7 +8,7 @@ def coordinates(num, sz):
     return 4.0*num/(sz - 1) + 1
 
 def create_world():
-    S1 = Sphere((1, 4, 2), 2, (100, 220, 0))
+    S1 = Sphere((1, 4, 2), 1.5, (200, 100, 0))
     S2 = Sphere((2, 2, 1), 1, (0, 100, 200))
     S3 = Sphere((3, 1, 1), 1, (100, 100, 200))
     P = HorizontalPlane(0, (200, 100, 200), (0, 20, 200))
@@ -42,12 +42,10 @@ def first_intersection_color(scene, line, light):
 
 
 def render(size):
-    path = "./rays.png"
-    tmp = Image.new('RGBA', (size, size), "white")
-    rays = tmp.load()
     world = create_world()
     camera = (2, -1, 3)
-    light = (3, -1, 10)            
+    light = (3, -1, 10)
+    color_dict = {}
     # Colouring each pixel
     for i in range(size):
         x0 = coordinates(i, size) 
@@ -55,7 +53,16 @@ def render(size):
             y0 = coordinates(k, size)
             j = size - 1 - k
             l = Line.through_points(camera, (x0, 0, y0))
-            rays[i, j] = first_intersection_color(world, l, light)
-    tmp.save(path)
+            color_dict[(i, j)] = first_intersection_color(world, l, light)
+    return color_dict
 
-render(300)
+def create_image(dic, size):
+    path = "./rays.png"
+    tmp = Image.new('RGBA', (size, size), "white")
+    rays = tmp.load()
+    for key in dic:
+        rays[key] = dic[key]
+    tmp.save(path)
+    
+create_image(render(300), 300)
+
