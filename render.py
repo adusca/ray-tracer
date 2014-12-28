@@ -8,7 +8,7 @@ def coordinates(num, sz):
     return 4.0*num/(sz - 1) + 1
 
 def create_world():
-    S1 = Sphere((1, 4, 2), 1.5, (200, 100, 0))
+    S1 = Sphere((1, 4, 2), 2, (20, 200, 0))
     S2 = Sphere((2, 2, 1), 1, (0, 100, 200))
     S3 = Sphere((3, 1, 1), 1, (100, 100, 200))
     P = HorizontalPlane(0, (200, 100, 200), (0, 20, 200))
@@ -56,13 +56,17 @@ def render(size):
             color_dict[(i, j)] = first_intersection_color(world, l, light)
     return color_dict
 
-def create_image(dic, size):
+def create_image(size):
     path = "./rays.png"
-    tmp = Image.new('RGBA', (size, size), "white")
+    tmp = Image.new('RGB', (size, size), "white")
     rays = tmp.load()
-    for key in dic:
-        rays[key] = dic[key]
+    dic = render(3*size)
+    for i in range(size):
+        for j in range(size):
+            pixels_to_sum = [dic[(3*i + di, 3*j + dj)] for di in range(0,3) for dj in range(0,3)]
+            sum_r, sum_g, sum_b = reduce(lambda (x1,x2,x3), (y1,y2,y3): (x1+y1, x2+y2, x3+y3), pixels_to_sum)
+            rays[i, j] = (sum_r/9, sum_g/9, sum_b/9)    
     tmp.save(path)
-    
-create_image(render(300), 300)
+            
+create_image(500)
 
