@@ -50,11 +50,14 @@ class HorizontalPlane():
         else:
             return []
 
-    def color_at_point(self, p):
-        if int(p[0]) % 2 == int(p[1]) % 2:
+    def color_at_point(self, point):
+        if int(point[0]) % 2 == int(point[1]) % 2:
             return self.color1 
         else:
             return self.color2
+
+    def normal(self, point):
+        return Vector((0, 0, 1))
 
 class Sphere():
     def __init__(self, center, radius, color):
@@ -77,8 +80,13 @@ class Sphere():
         C = q.squared_norm() - self.radius**2
         return solve_quadradic(A, B, C)
         
-    def color_at_point(self, p):
+    def color_at_point(self, point):
         return self.color
+
+    def normal(self, point):
+        line = Line.through_points(self.center, point)
+        q = Vector(line.slope)
+        return q.normalize()
 
 class Vector():
     def __init__(self, coords):
@@ -117,6 +125,10 @@ class Vector():
     def project(self, v2):
         n = float(self.scalar_product(v2))/v2.scalar_product(v2)
         return v2.mul_by_number(n)
+
+    def normalize(self):
+        n = 1.0/self.norm()
+        return self.mul_by_number(n)
 
 def solve_quadradic(a, b, c):
     delta = b**2 - 4*a*c
