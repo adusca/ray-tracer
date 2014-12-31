@@ -39,7 +39,8 @@ class HorizontalPlane():
         self.cte = cte
         self.color1 = color1
         self.color2 = color2
-
+        self.reflectivity = 0.2
+        
     def intersection_value(self, line):
         a = line.slope[2]
         if a == 0:
@@ -60,7 +61,7 @@ class HorizontalPlane():
         return Vector((0, 0, 1))
 
 class Sphere():
-    def __init__(self, center, radius, color):
+    def __init__(self, center, radius, color, reflectivity=0):
         """
         Center is a 3-element tuple representing a spacial position
         Radius is a positive number
@@ -69,6 +70,7 @@ class Sphere():
         self.center = center
         self.radius = radius
         self.color = color
+        self.reflectivity = reflectivity
 
     def intersection_value(self, line):
         v = Vector(line.slope)
@@ -130,6 +132,8 @@ class Vector():
         n = 1.0/self.norm()
         return self.mul_by_number(n)
 
+# Some extra mathematical methods
+
 def solve_quadradic(a, b, c):
     delta = b**2 - 4*a*c
     if delta < 0:
@@ -138,3 +142,16 @@ def solve_quadradic(a, b, c):
     ans.append((-b - sqrt(delta))/(2.0*a))
     ans.append((-b + sqrt(delta))/(2.0*a))
     return filter(lambda x: x > 0.01, ans)
+
+def tuple_times_num(tup, num):
+    return (int(num*tup[0]), int(num*tup[1]), int(num*tup[2]))
+
+def tuple_average(array_of_tuples):
+    n = len(array_of_tuples)
+    a, b, c = 0, 0, 0
+    for k in range(n):
+        a += array_of_tuples[k][0]
+        b += array_of_tuples[k][1]
+        c += array_of_tuples[k][2]
+    return (a/n, b/n, c/n)
+
